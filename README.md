@@ -71,11 +71,12 @@ encryptsmime_destination_recipient_limit = 1
 ```
 
 Add the milter for specific users.
-Be careful though we're overriding the default behaviour of smtpd_recipient_restrictions!
+Be careful though this overrides the default behaviour of smtpd_recipient_restrictions! Check http://www.postfix.org/postconf.5.html#smtpd_recipient_restrictions first!
 
 
 ```
-smtpd_recipient_restrictions =  check_recipient_access hash:/etc/postfix/smime_access
+smtpd_recipient_restrictions =  check_recipient_access hash:/etc/postfix/smime_access,
+                                ...
 
 ```
 
@@ -88,7 +89,7 @@ and execute `postmap /etc/postfix/smime_access`
 
 
 
-You can also do this without applying the milter to individual users, but this may hurt your performance if your system has to send hundreds of mails per second, cause every mail has to pass the milter and therefor is queued twice.
+You can also do it without applying the milter to individual users, but this may hurt your performance if your system has to send hundreds of mails per second, cause every mail has to pass the milter and therefor is queued twice.
 Just add `-o content_filter=encryptsmime:dummy` in /etc/postfix/master.cf to this line `smtp inet n - - - - smtpd`:
 
 ```
