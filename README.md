@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/svenbs/mailenc.svg?branch=master)](https://travis-ci.org/svenbs/mailenc)
+
 # mailenc
 Encryption of emails to selected recipients directly on the outgoing MTA. Encryption is to be done with S/MIME.
 
