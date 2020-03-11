@@ -31,9 +31,9 @@ func sendMail(addr, from, rcpt string, msg []byte) error {
 	return err
 }
 
-func encryptMail(certdir, from, rcpt, subject string, buf bytes.Buffer) ([]byte, error) {
+func encryptMail(certdir, cipher, from, rcpt, subject string, buf bytes.Buffer) ([]byte, error) {
 	// Openssl for smime encryption.
-	c := exec.Command("openssl", "smime", "-encrypt", "-des3", "-from", from, "-to", rcpt, "-subject", subject, certdir+"/"+rcpt+".crt")
+	c := exec.Command("openssl", "smime", "-encrypt", "-"+cipher, "-from", from, "-to", rcpt, "-subject", subject, certdir+"/"+rcpt+".crt")
 
 	// Pipe msg to openssl.
 	stdin, err := c.StdinPipe()
@@ -53,12 +53,13 @@ func encryptMail(certdir, from, rcpt, subject string, buf bytes.Buffer) ([]byte,
 
 func main() {
 	var (
-		addr, rcpt, from, subject, certdir string
+		addr, rcpt, from, subject, certdir, cipher string
 	)
 	flag.StringVar(&addr, "addr", "localhost:10025", "smtp address to send to")
 	flag.StringVar(&certdir, "dir", "/etc/postfix/smime", "smime cert directory")
 	flag.StringVar(&from, "from", "sender@example.com", "mail sender")
 	flag.StringVar(&rcpt, "to", "recipient@example.com", "mail recipient")
+	flag.StringVar(&cipher, "cipher", "aes-256-cbc", "openssl encryption cipher, see man enc for possible ciphers")
 	flag.Parse()
 
 	// Read Mail from stdin
@@ -74,7 +75,7 @@ func main() {
 	header := m.Header
 	subject = header.Get("Subject")
 
-	emsg, err := encryptMail(certdir, from, rcpt, subject, buf)
+	emsg, err := encryptMail(certdir, cipher, from, rcpt, subject, buf)
 	if err != nil {
 		// Send mail unencrypted
 		log.Println("not encrypting")

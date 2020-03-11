@@ -146,7 +146,7 @@ func TestEncryption(t *testing.T) {
 		t.Fatalf("couldn't write testMail to buffer: %v", err)
 	}
 
-	emsg, err := encryptMail(certdir, "example@example.org", rcpt, "test-SMIME", buf)
+	emsg, err := encryptMail(certdir, "aes-256-cbc", "example@example.org", rcpt, "test-SMIME", buf)
 	if err != nil {
 		t.Fatalf("failed to encrypt mail: %v, %s", err, emsg)
 	}
